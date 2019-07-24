@@ -19,8 +19,11 @@ def get_fact():
 
     return facts[0].getText()
 
-def pig_latinize():
-    pass
+def pig_latinize(pig_latin_URL):
+    response = requests.get(url=pig_latin_URL)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    string_list = soup.find_all(string=True)
+    return string_list[-2]
 
 @app.route('/')
 def home():
@@ -41,6 +44,10 @@ def home():
 
     # Obtain the URL of the Website from the Response Headers
     response_url = response.headers['location']
+
+    # Take that URL and get the Pig Latin String
+    pig_latin = pig_latinize(response_url)
+
     
     text = """
     <html>
@@ -48,7 +55,7 @@ def home():
     Here is the original fact: {}
     <br> Here it the Response URL: {}
     </body>
-    </html>""".format(random_fact, response_url)
+    </html>""".format(random_fact, pig_latin)
 
     # Pass the fact to the pig latinizer 
 
@@ -61,4 +68,13 @@ def home():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 6787))
     app.run(host='0.0.0.0', port=port)
+
+#url = "http://hidden-journey-62459.herokuapp.com/esultray/1b7286fbc29436f4de5c7c582a851755/"
+#response = requests.get(url=url)
+#soup = BeautifulSoup(response.content, "html.parser")
+#string_list = soup.find_all(string=True)
+#print(string_list[-2])
+#content = soup.text
+
+
 
